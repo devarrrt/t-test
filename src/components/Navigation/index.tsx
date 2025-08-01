@@ -9,21 +9,20 @@ export const Navigation = () => {
   const { currentIndex, next, prev, selectAnswer, answers } = useSurveyContext();
 
   const isFirst = currentIndex === 0;
-  const isLast = questionsData[questionsData.length - 1];
+  const isLast = currentIndex === questionsData.length - 1;
   const currentId = questionsData[currentIndex]?.id;
+
+  const handleSkip = () => {
+    selectAnswer(currentId, 'skip');
+    next();
+  };
 
   return (
     <Container>
       <Button type="button" onClick={prev} disabled={isFirst} color="#ffc688">
         Назад
       </Button>
-      <Button
-        type="button"
-        onClick={() => {
-          selectAnswer(currentId, 'skip');
-          next();
-        }}
-      >
+      <Button type="button" onClick={handleSkip}>
         Затрудняюсь ответить/Не помню
       </Button>
       <Button
@@ -32,7 +31,7 @@ export const Navigation = () => {
         color="#72c48b"
         disabled={!answers[currentId]}
       >
-        {isLast.id === currentId ? 'Завершить' : 'Далее'}
+        {isLast ? 'Завершить' : 'Далее'}
       </Button>
     </Container>
   );

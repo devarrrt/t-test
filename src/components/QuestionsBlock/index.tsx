@@ -1,25 +1,24 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 
-import { useSurveyContext } from '../../state/surveyContext';
+import { Option } from './Option';
 
 import { Question } from '../../types';
 
-import {
-  CustomCheckbox,
-  HiddenInput,
-  Label,
-  QuestionContainer,
-  TextQuestion,
-  Title,
-} from './styles';
+import { useSurveyContext } from '../../state/surveyContext';
 
-interface QuestionsBlockType {
+import { QuestionContainer, Title, TextQuestion } from './styles';
+
+interface QuestionsBlockProps {
   data: Question[];
 }
 
-export const QuestionsBlock: FC<QuestionsBlockType> = ({ data }) => {
+export const QuestionsBlock: FC<QuestionsBlockProps> = ({ data }) => {
   const { currentIndex, answers, selectAnswer } = useSurveyContext();
-  const currentQuestion = data[currentIndex];
+
+  const currentQuestion = useMemo(
+    () => data[currentIndex],
+    [data, currentIndex],
+  );
 
   const handleChange = (optionId: string) => {
     if (currentQuestion.type === 'single') {
@@ -37,7 +36,6 @@ export const QuestionsBlock: FC<QuestionsBlockType> = ({ data }) => {
 
   const isChecked = (optionId: string): boolean => {
     const value = answers[currentQuestion.id];
-
     return currentQuestion.type === 'single'
       ? value === optionId
       : Array.isArray(value) && value.includes(optionId);
@@ -45,24 +43,18 @@ export const QuestionsBlock: FC<QuestionsBlockType> = ({ data }) => {
 
   return (
     <QuestionContainer>
-      <Title>Вопрос: {currentQuestion?.id}</Title>
-      <TextQuestion> {currentQuestion?.title} </TextQuestion>
-      {currentQuestion?.options?.map((option) => (
-        <Label key={option.id}>
-          <span>{option.text}</span>
-          <HiddenInput
-            type={currentQuestion.type === 'single' ? 'radio' : 'checkbox'}
-            name={currentQuestion.id}
-            value={option.id}
-            checked={isChecked(option.id)}
-            onChange={() => handleChange(option.id)}
-            id={`option_${option.id}`}
-          />
-          <CustomCheckbox
-            checked={isChecked(option.id)}
-            type={currentQuestion.type === 'single' ? 'radio' : 'checkbox'}
-          />
-        </Label>
+      <Title>Вопрос: {currentQuestion.id}</Title>
+      <TextQuestion>{currentQuestion.title}</TextQuestion>
+      {currentQuestion.options.map((option) => (
+        <Option
+          key={option.id}
+          id={option.id}
+          text={option.text}
+          isChecked={isChecked}
+          type={currentQuestion.type === 'single' ? 'radio' : 'checkbox'}
+          questionId={currentQuestion.id}
+          handleChange={handleChange}
+        />
       ))}
     </QuestionContainer>
   );

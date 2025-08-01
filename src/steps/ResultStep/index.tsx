@@ -1,5 +1,7 @@
 import { useSurveyContext } from '../../state/surveyContext';
 
+import { questionsData } from '../../data';
+
 import {
   Container,
   ContentBox,
@@ -11,8 +13,6 @@ import {
   InfoValue,
   ButtonBlock,
 } from './styles';
-
-import { questionsData } from '../../data';
 
 import { Button } from '../../globalStyles';
 
@@ -29,7 +29,7 @@ const ResultStep = () => {
         <InfoContainer>
           <InfoBox>
             <InfoLabel>Всего вопросов:</InfoLabel>
-            <InfoValue>{questionsData.length}</InfoValue>
+            <InfoValue>{questionsData?.length ?? 0}</InfoValue>
           </InfoBox>
           <InfoBox>
             <InfoLabel>Вопросов без ответа:</InfoLabel>
